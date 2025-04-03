@@ -51,12 +51,55 @@ def upload_file():
     plt.savefig(histogram_path)
     plt.close()
 
+    # X̄-R Chart
+    subgroup_size = 5
+    subgroups = [values[i:i + subgroup_size] for i in range(0, len(values), subgroup_size)]
+    subgroup_means = [s.mean() for s in subgroups if len(s) == subgroup_size]
+    subgroup_ranges = [s.max() - s.min() for s in subgroups if len(s) == subgroup_size]
+
+    plt.figure(figsize=(6, 4))
+    plt.plot(subgroup_means, marker='o', linestyle='-')
+    plt.title("X̄ Chart")
+    xbar_chart_path = os.path.join(UPLOAD_FOLDER, "xbar_chart.png")
+    plt.savefig(xbar_chart_path)
+    plt.close()
+
+    plt.figure(figsize=(6, 4))
+    plt.plot(subgroup_ranges, marker='o', linestyle='-')
+    plt.title("R Chart")
+    r_chart_path = os.path.join(UPLOAD_FOLDER, "r_chart.png")
+    plt.savefig(r_chart_path)
+    plt.close()
+
+    #moving range Chart 
+    moving_ranges = [abs(values[i] - values[i-1]) for i in range(1, len(values))]
+
+    plt.figure(figsize=(6, 4))
+    plt.plot(moving_ranges, marker='o', linestyle='-')
+    plt.title("Moving Range Chart")
+    moving_range_chart_path = os.path.join(UPLOAD_FOLDER, "moving_range_chart.png")
+    plt.savefig(moving_range_chart_path)
+    plt.close()
+
+    # I-Chart
+    plt.figure(figsize=(6, 4))
+    plt.plot(values, marker='o', linestyle='-')
+    plt.title("I-Chart")
+    ichart_path = os.path.join(UPLOAD_FOLDER, "i_chart.png")
+    plt.savefig(ichart_path)
+    plt.close()
+
+
     return jsonify({
         "Cp": round(Cp, 3),
         "Cpk": round(Cpk, 3),
         "Pp": round(Pp, 3),
         "Ppk": round(Ppk, 3),
-        "histogram": "/plot/histogram"
+        "histogram": "/plot/histogram",
+        "xbar_chart": "/plot/xbar_chart",
+        "r_chart": "/plot/r_chart",
+        "moving_range_chart": "/plot/moving_range_chart",
+        "i_chart": "/plot/i_chart"
     })
 
 @app.route('/plot/histogram')
